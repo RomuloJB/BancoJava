@@ -8,15 +8,18 @@ import java.util.Date;
 import java.util.List;
 
 import dao.MovimentacaoDAO;
+import dao.MoviDao;
+
 import entidade.Movimentacao;
 
 public class MovimentacaoServico {
 	MovimentacaoDAO dao = new MovimentacaoDAO();
+	MoviDao daoComGenerico = new MoviDao();
 
 	public Movimentacao inserir(Movimentacao movimentacao) {
 		movimentacao.setDescricao("Operação de " + movimentacao.getTipoTransacao());
 		movimentacao.setDataTransacao(new Date());
-		Movimentacao movimentacaoBanco = dao.inserir(movimentacao);
+		Movimentacao movimentacaoBanco = daoComGenerico.inserir(movimentacao);
 		return movimentacaoBanco;
 	}
 
