@@ -1,12 +1,40 @@
 package entidade;
 
+import java.sql.Date;
+
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import servico.ContaServico;
 import servico.MovimentacaoServico;
 
+@Entity
 public class Conta {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_cliente")
+	private Cliente cliente;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataAbertura;
+	@Enumerated(EnumType.STRING)
+	private ContaTipo contaTipo;
+	
     private String numeroConta;
-    private Cliente cliente;
-    private MovimentacaoServico movimentacaoServico;
     private double saldo;
+    MovimentacaoServico movimentacaoServico = new MovimentacaoServico();
+    
 
     public Conta(String numeroConta, Cliente cliente, MovimentacaoServico movimentacaoServico) {
         this.numeroConta = numeroConta;
@@ -36,7 +64,7 @@ public class Conta {
         return saldo;
     }
 
-    public void atualizarSaldo(Movimentacao movimentacao) {
-        this.saldo = movimentacaoServico.verificarSaldo(movimentacao);
+    public void setSaldo(double saldo){
+        this.saldo = saldo;
     }
 }

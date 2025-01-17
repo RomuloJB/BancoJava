@@ -8,7 +8,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import entidade.Conta;
 import entidade.Movimentacao;
+//import servico.Conta;
 
 public class MovimentacaoDAO {
 
@@ -61,11 +63,29 @@ public class MovimentacaoDAO {
 		return movimentacoes;
 	}
 	// buscar todas as contas de acordo com o CPF
+	public List<Conta> buscarContaPorCpf(String cpf) {
+	    EntityManager em = emf.createEntityManager();
+	    Query query = em.createQuery("from Conta where cpfCliente = :cpf");
+	    query.setParameter("cpf", cpf);
+	    List<Conta> contas = query.getResultList();
+	    em.close();
+	    return contas;
+	}
 	// buscar todas as contas de acordo com o tipo da transação
+	public List<Conta> buscarContaPorTransacao(String tipoTransacao){
+	    EntityManager em = emf.createEntityManager();
+	    Query query = em.createQuery(
+	        "select distinct c from Conta c join c.movimentacoes m where m.tipoTransacao = :tipoTransacao"
+	    );
+	    query.setParameter("tipoTransacao", tipoTransacao);
+	    List<Conta> contas = query.getResultList();
+	    em.close();
+	    return contas;
+	}
 
 	public List<Movimentacao> buscarPorCpf(String cpf) {
 			EntityManager em = emf.createEntityManager();
-			Query query = em.createQuery("from Movimentacao where cpfCorrentista='"+cpf+"'");
+			Query query = em.createQuery("from Movimentacao where cpfCliente='"+cpf+"'");
 			em.close();
 			return query.getResultList();
 	}
@@ -77,4 +97,5 @@ public class MovimentacaoDAO {
 		return movimentacao;
 		// return em.find(Movimentacao.class, id);
 	}
+
 }
