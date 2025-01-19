@@ -71,16 +71,16 @@ public class MovimentacaoDAO {
 	    em.close();
 	    return contas;
 	}
-	// buscar todas as contas de acordo com o tipo da transação
-	public List<Conta> buscarContaPorTransacao(String tipoTransacao){
+	
+	public List<Movimentacao> buscarPorTipoTransacao(String tipoTransacao){
 	    EntityManager em = emf.createEntityManager();
 	    Query query = em.createQuery(
-	        "select distinct c from Conta c join c.movimentacoes m where m.tipoTransacao = :tipoTransacao"
+	        "from Movimentacao where tipoTransacao = :tipoTransacao"
 	    );
 	    query.setParameter("tipoTransacao", tipoTransacao);
-	    List<Conta> contas = query.getResultList();
+	    List<Movimentacao> movimentacoes = query.getResultList();
 	    em.close();
-	    return contas;
+	    return movimentacoes;
 	}
 
 	public List<Movimentacao> buscarPorCpf(String cpf) {

@@ -39,4 +39,19 @@ public abstract class DAOGenerico<T> {
 			em.close();
 		}
 	}
+
+	public T excluir(Long id){
+		EntityManager em = getEntityManager();
+		try {
+			em.getTransaction().begin();
+			T objeto = em.find(classeEntidade, id);
+			if(objeto != null) {
+				em.remove(objeto);
+			}
+			em.getTransaction().commit();
+			return objeto;
+		}finally {
+			em.close();
+		}
+	}
 }

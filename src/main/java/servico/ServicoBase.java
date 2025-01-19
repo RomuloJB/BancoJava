@@ -13,7 +13,7 @@ public interface ServicoBase <T>{
 		return getDAO().alterar(entidade);
 	}
 
-	default T excluir(T entidade){
-		return getDAO().excluir(entidade);
+	default T excluir(Long id){
+		return getDAO().excluir(id);
 	}
 }

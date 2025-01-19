@@ -1,7 +1,7 @@
 package util;
 
 public class ValidarCpf {
-    public boolean validarCpf(String CPF) {
+    public static boolean validarCpf(String CPF) {
 		if (CPF == null || CPF.length() != 11 || CPF.matches("(\\d)\\1{10}")) {
 			return false;
 		}

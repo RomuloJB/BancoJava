@@ -32,17 +32,8 @@ public class Conta {
 	private ContaTipo contaTipo;
 	
     private String numeroConta;
-    private double saldo;
+
     MovimentacaoServico movimentacaoServico = new MovimentacaoServico();
-    
-
-    public Conta(String numeroConta, Cliente cliente, MovimentacaoServico movimentacaoServico) {
-        this.numeroConta = numeroConta;
-        this.cliente = cliente;
-        this.movimentacaoServico = movimentacaoServico;
-        this.saldo = 0.0;
-
-    }
 
     public String getNumeroConta() {
         return numeroConta;
@@ -60,11 +51,11 @@ public class Conta {
         this.cliente = cliente;
     }
 
-    public double getSaldo(){
-        return saldo;
+    public ContaTipo getContaTipo() {
+        return contaTipo;
     }
 
-    public void setSaldo(double saldo){
-        this.saldo = saldo;
+    public void setContaTipo(ContaTipo contaTipo) {
+        this.contaTipo = contaTipo;
     }
 }

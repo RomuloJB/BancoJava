@@ -5,6 +5,7 @@ import java.util.Date;
 import controle.*;
 import entidade.*;
 import servico.*;
+import util.TipoTransacao;
 
 public class MovimentacaoTela {
 
@@ -12,44 +13,69 @@ public class MovimentacaoTela {
 		MovimentacaoControle controle = new MovimentacaoControle();
 		MovimentacaoServico movimentacaoServico = new MovimentacaoServico();
 		ContaControle contaControle = new ContaControle();
-		
-		Cliente cliente = new Cliente(
-			"José", 
-			"04425225112");
-		
-		Conta conta1 = new Conta("001", cliente, movimentacaoServico);
-        Conta conta2 = new Conta("002", cliente, movimentacaoServico);
-        Conta conta3 = new Conta("003", cliente, movimentacaoServico);
-        Conta conta4 = new Conta("004", cliente, movimentacaoServico); // vai dar erro
-        
-        contaControle.adicionarConta(conta1);
-        contaControle.adicionarConta(conta2);
-        contaControle.adicionarConta(conta3);
-        contaControle.adicionarConta(conta4); // vai dar erro
+		ContaServico contaServico = new ContaServico();
 
-        contaControle.listarContas();
+// teste de inserção de cliente
+		ClienteControle clienteControle = new ClienteControle();
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João");
+		cliente.setCpfCliente("12345678900");
+		clienteControle.inserir(cliente);
+				
+// teste de inserção de contas (vai dar erro se tiver mais de 3 contas)
+		Conta conta1 = new Conta();
+		conta1.setNumeroConta("001");
+		conta1.setCliente(cliente);
+		conta1.setContaTipo(ContaTipo.CONTA_CORRENTE);
+        contaControle.adicionarConta(cliente, conta1);
+
+		Conta conta2 = new Conta();
+		conta1.setNumeroConta("002");
+		conta1.setCliente(cliente);
+		conta1.setContaTipo(ContaTipo.CONTA_CORRENTE);
+        contaControle.adicionarConta(cliente, conta2);
+
+		Conta conta3 = new Conta();
+		conta1.setNumeroConta("003");
+		conta1.setCliente(cliente);
+		conta1.setContaTipo(ContaTipo.CONTA_POUPANCA);
+        contaControle.adicionarConta(cliente, conta3);
+
+		Conta conta4 = new Conta();
+		conta1.setNumeroConta("004");
+		conta1.setCliente(cliente);
+		conta1.setContaTipo(ContaTipo.CONTA_CORRENTE);
+        contaControle.adicionarConta(cliente, conta4); // vai dar erro
+        
+        contaControle.listarContas(cliente);
     
+// teste de inserção de movimentação
 		Movimentacao mov = new Movimentacao();
-		mov.setCpfCliente(cliente.getCpfCliente());
+		mov.setValorOperacao(500.0);
 		mov.setDataTransacao(new Date());
 		mov.setDescricao("Depósito de 500,00 no dia 03/10/24");
-		mov.setNomeCliente(cliente.getNomeCliente());
-		mov.setTipoTransacao("depósito");
-		mov.setValorOperacao(500.0);
+		mov.setTipoTransacao(TipoTransacao.DEPOSITO);
+		mov.setConta(conta1);
 		
 		controle.inserir(mov);
 
-		for (Conta conta : cliente.getContas()) {
-			conta.atualizarSaldo(mov);
+// teste de atualização de saldo
+
+/*
+for (Conta conta : cliente.getContas()) {
+			contaServico.atualizarSaldo(conta1, 500.00);
 			System.out.println("Saldo da conta " + conta.getNumeroConta() + ": " + conta.getSaldo());
 		}
-
+*/
 		
-		ContaPoupanca contaPoupanca = new ContaPoupanca("001", cliente, movimentacaoServico, 0.005);
+// teste de cálculo de rendimento
+		ContaPoupanca contaPoupanca = new ContaPoupanca("003", cliente, movimentacaoServico, 0.005);
         contaPoupanca.depositar(1000.00);
 
         double rendimento = contaPoupanca.calcularRendimentoMensal();
         System.out.println("Rendimento mensal: " + rendimento);
     }
+
+
 }
 

@@ -8,40 +8,34 @@ import java.util.Date;
 import java.util.List;
 
 import dao.MovimentacaoDAO;
+import dao.DAOGenerico;
 import dao.MoviDao;
 import entidade.Cliente;
 import entidade.Movimentacao;
 
-public class MovimentacaoServico {
+public class MovimentacaoServico implements ServicoBase<Movimentacao> {
 	MovimentacaoDAO dao = new MovimentacaoDAO();
-	MoviDao daoComGenerico = new MoviDao();
+	MoviDao daog = new MoviDao();
 	Movimentacao mov = new Movimentacao();
 
+	@Override
 	public Movimentacao inserir(Movimentacao movimentacao) {
 		movimentacao.setDescricao("Operação de " + movimentacao.getTipoTransacao());
 		movimentacao.setDataTransacao(new Date());
-		Movimentacao movimentacaoBanco = daoComGenerico.inserir(movimentacao);
+		Movimentacao movimentacaoBanco = daog.inserir(movimentacao);
 		return movimentacaoBanco;
 	}
 
-	
-	public boolean verificarFraude(Cliente cliente) {
-		List<Movimentacao> movs = dao.buscarPorCpf(cliente.getCpfCliente());
-		double somaValores = 0.0;
-		int cont = 0;
+	public Movimentacao inserirCashback (Movimentacao cashback) {
+		return dao.inserir(cashback);
+	}
 
-		for (Movimentacao m : movs) {
-			somaValores += m.getValorOperacao();
-			cont++;
-		}
+	public Movimentacao buscarPorId (Long id) {
+		return dao.buscarPorId(id);
+	}
 
-		double mediaValores = somaValores / cont;
-		if (mov.getValorOperacao() > 3 * mediaValores) {
-			return false;
-
-		} else {
-			return true;
-		}
+	public List<Movimentacao> buscarPorTipoTransacao(String tipoTransacao) {
+		return dao.buscarPorTipoTransacao(tipoTransacao);
 	}
 
 	public List<Movimentacao> consultarExtratoMensal(String cpfCorrentista, int mes, int ano) {
@@ -73,5 +67,10 @@ public class MovimentacaoServico {
 		}
 	
 		return extratoPeriodico;
+	}
+
+	@Override
+	public DAOGenerico<Movimentacao> getDAO() {
+		return daog;
 	}
 }

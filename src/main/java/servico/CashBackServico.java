@@ -36,7 +36,7 @@ public class CashBackServico {
 	                .atZone(ZoneId.systemDefault())
 	                .toLocalDate();
 	
-	        if (transacao.getTipoTransacao().equalsIgnoreCase("CARTAO DE DEBITO") && (dataTransacao.isEqual(inicioMesAnterior) || dataTransacao.isAfter(inicioMesAnterior)) && dataTransacao.isBefore(fimMesAnterior.plusDays(1))) {
+	        if (transacao.getTipoTransacao().name().equalsIgnoreCase("CARTAO DE DEBITO") && (dataTransacao.isEqual(inicioMesAnterior) || dataTransacao.isAfter(inicioMesAnterior)) && dataTransacao.isBefore(fimMesAnterior.plusDays(1))) {
 	            totalCompras += transacao.getValorOperacao();
 	        }
 	    }
