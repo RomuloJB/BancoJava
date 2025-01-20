@@ -9,6 +9,8 @@ import dao.MoviDao;
 import entidade.Cliente;
 import entidade.Conta;
 import entidade.Movimentacao;
+import util.TipoTransacao;
+import util.Utils;
 import util.ValidarCpf;
  
 public class ContaServico {
@@ -16,6 +18,7 @@ public class ContaServico {
 	MoviDao mdao = new MoviDao();
 	Movimentacao mov = new Movimentacao();
 	Cliente cliente = new Cliente();
+	Utils util = new Utils();
 
 	public Conta inserir(Cliente cliente, Conta novaConta) {
         List<Conta> contas = cliente.getContas();
@@ -67,33 +70,33 @@ public class ContaServico {
 		double totalPagamentos = 0.0;
 		double totalPix = 0.0;
 
-		for (Movimentacao m : movs) {
-			if (m.getTipoTransacao().name().equalsIgnoreCase("DEPOSITO")) {
-				produtoDepositos *= m.getValorOperacao();
-			} else if (m.getTipoTransacao().name().equalsIgnoreCase("SAQUE")) {
-				totalSaques += m.getValorOperacao();
-			} else if (m.getTipoTransacao().name().equalsIgnoreCase("PAGAMENTO")) {
-				totalPagamentos += m.getValorOperacao();
-			} else if (m.getTipoTransacao().name().equalsIgnoreCase("PIX") && m.getDescricao().contains("pagamento")) {
-				totalPix += m.getValorOperacao();
-			}
-		}
+        for (Movimentacao m : movs) {
+            TipoTransacao tipo = m.getTipoTransacao();
+            if (tipo == TipoTransacao.DEPOSITO) {
+                produtoDepositos *= m.getValorOperacao();
+            } else if (tipo == TipoTransacao.SAQUE) {
+                totalSaques += m.getValorOperacao();
+            } else if (tipo == TipoTransacao.PAGAMENTO) {
+                totalPagamentos += m.getValorOperacao();
+            } else if (tipo == TipoTransacao.PIX && m.getDescricao().contains("pagamento")) {
+                totalPix += m.getValorOperacao();
+            }
+        }
 
 		double saldo = produtoDepositos - totalSaques - totalPagamentos - totalPix;
 		saldo = Math.max(saldo, 0.0);
 
 		if (saldo < 100.0) {
-			enviarNotificacao(cliente.getCpfCliente(), saldo);
+			util.enviarNotificacao(cliente.getCpfCliente(), saldo);
 		}
 
+		List<Conta> contas = cliente.getContas();
+		for (Conta conta : contas) {
+			conta.setSaldo(saldo);
+		}
+		
 		return saldo;
 	}
-// transferir para util
-	private void enviarNotificacao(String cpfCorrentista, double saldo) {
-		System.out.println("Notificação: O saldo do correntista com CPF " + cpfCorrentista
-				+ " está abaixo de 100. Saldo atual: " + saldo);
-	}
-//
 
 	public boolean limitePix(Movimentacao mov) {
 		if (mov.getTipoTransacao().name().equalsIgnoreCase("PIX") && mov.getValorOperacao() > 300.00) {

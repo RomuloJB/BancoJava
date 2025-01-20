@@ -11,9 +11,7 @@ public class MovimentacaoTela {
 
 	public static void main(String[] args) {
 		MovimentacaoControle controle = new MovimentacaoControle();
-		MovimentacaoServico movimentacaoServico = new MovimentacaoServico();
 		ContaControle contaControle = new ContaControle();
-		ContaServico contaServico = new ContaServico();
 
 // teste de inserção de cliente
 		ClienteControle clienteControle = new ClienteControle();
@@ -21,7 +19,9 @@ public class MovimentacaoTela {
 		cliente.setNomeCliente("João");
 		cliente.setCpfCliente("12345678900");
 		clienteControle.inserir(cliente);
-				
+
+/*
+		
 // teste de inserção de contas (vai dar erro se tiver mais de 3 contas)
 		Conta conta1 = new Conta();
 		conta1.setNumeroConta("001");
@@ -59,23 +59,17 @@ public class MovimentacaoTela {
 		
 		controle.inserir(mov);
 
-// teste de atualização de saldo
-
-/*
-for (Conta conta : cliente.getContas()) {
-			contaServico.atualizarSaldo(conta1, 500.00);
-			System.out.println("Saldo da conta " + conta.getNumeroConta() + ": " + conta.getSaldo());
-		}
-*/
-		
 // teste de cálculo de rendimento
-		ContaPoupanca contaPoupanca = new ContaPoupanca("003", cliente, movimentacaoServico, 0.005);
+		ContaPoupanca contaPoupanca = new ContaPoupanca("003", cliente, ContaTipo.CONTA_POUPANCA, 0.005);
+		
         contaPoupanca.depositar(1000.00);
 
         double rendimento = contaPoupanca.calcularRendimentoMensal();
         System.out.println("Rendimento mensal: " + rendimento);
-    }
 
+*/
+
+    }
 
 }
 

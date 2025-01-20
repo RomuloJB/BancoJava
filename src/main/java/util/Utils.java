@@ -11,7 +11,7 @@ public class Utils {
 	MovimentacaoDAO	mdao = new MovimentacaoDAO();
 	Cliente cliente = new Cliente();
 
-	private void enviarNotificacao(String cpfCorrentista, double saldo) {
+	public void enviarNotificacao(String cpfCorrentista, double saldo) {
 		System.out.println("Notificação: O saldo do correntista com CPF " + cpfCorrentista
 				+ " está abaixo de 100. Saldo atual: " + saldo);
 	}
