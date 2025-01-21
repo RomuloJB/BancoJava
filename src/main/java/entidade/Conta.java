@@ -1,6 +1,6 @@
 package entidade;
 
-import java.sql.Date;
+import java.util.Date;
 import javax.persistence.*;
 
 @Entity
@@ -10,7 +10,7 @@ public class Conta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "id_cliente")
     private Cliente cliente;
 
@@ -20,7 +20,9 @@ public class Conta {
     @Enumerated(EnumType.STRING)
     private ContaTipo contaTipo;
 
+    @Column(name = "numero_conta")
     private String numeroConta;
+    @Column(name = "saldo")
     private double saldo;
 
     public Conta() {

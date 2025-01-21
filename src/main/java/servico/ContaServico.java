@@ -3,8 +3,10 @@ package servico;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
-
+import dao.ContaDAO;
+import dao.DAOGenerico;
 import dao.MoviDao;
 import entidade.Cliente;
 import entidade.Conta;
@@ -13,55 +15,54 @@ import util.TipoTransacao;
 import util.Utils;
 import util.ValidarCpf;
  
-public class ContaServico {
+public class ContaServico implements ServicoBase<Conta> {
 	ClienteServico clienteservico = new ClienteServico();
 	MoviDao mdao = new MoviDao();
 	Movimentacao mov = new Movimentacao();
 	Cliente cliente = new Cliente();
 	Utils util = new Utils();
-
-	public Conta inserir(Cliente cliente, Conta novaConta) {
-        List<Conta> contas = cliente.getContas();
-        if (contas.size() >= 3) {
-            return null;
-        }
-        contas.add(novaConta);
-        return novaConta;
-    }
+	ContaDAO dao = new ContaDAO();
 	
-	public boolean adicionarConta(Cliente cliente, Conta novaConta) {
+	public Conta inserir(Cliente cliente, Conta novaConta) {
 		
 		List<Conta> contas = cliente.getContas();
-        if (contas.size() > 3) {
-            System.out.println("Não é possível criar uma nova conta. O cliente já possui o máximo de 3 contas.");
-            return false;
+		if(contas == null) {
+			contas = new ArrayList<>();
+			cliente.setContas(contas);
+		}
+
+        if (contas.size() >= 3) {
+            System.out.println("\nNão é possível criar uma nova conta. O cliente já possui o máximo de 3 contas.");
+            return null;
         }
-        
+
         contas.add(novaConta);
-        System.out.println("Conta " + novaConta.getNumeroConta() + " adicionada com sucesso para o cliente " + cliente.getNomeCliente());
-        return true;
-    
+		novaConta.setCliente(cliente);
+		dao.inserir(novaConta);
+		
+        System.out.println("\nConta " + novaConta.getNumeroConta() + " adicionada com sucesso para o cliente " + cliente.getNomeCliente());
+        return novaConta;
 	}
 
 	public void listarContas(Cliente cliente) {
     	List<Conta> contas = cliente.getContas();
-        System.out.println("Contas do cliente " + cliente.getNomeCliente() + ":");
+        System.out.println("\nContas do cliente " + cliente.getNomeCliente() + ":");
         
         for (Conta conta : contas) {
-            System.out.println("- Conta número: " + conta.getNumeroConta());
+            System.out.println("\nConta número: " + conta.getNumeroConta());
         }
     }
+
 /*
   public void atualizarSaldo(Conta conta, double valor){
 		double novoSaldo = conta.getSaldo() + valor;
 		conta.setSaldo(novoSaldo);
 	}
 */
-    
 	
 	public double verificarSaldo(Cliente cliente) {
 		if(!ValidarCpf.validarCpf(cliente.getCpfCliente())) {
-			throw new IllegalArgumentException("CPF inválido");
+			throw new IllegalArgumentException("\nCPF inválido");
 		}
 		
 		List<Movimentacao> movs = mdao.buscarPorCpf(cliente.getCpfCliente());
@@ -108,7 +109,7 @@ public class ContaServico {
 
 	public double calcularSaquesDiarios(Movimentacao mov) {
 		if (!ValidarCpf.validarCpf(cliente.getCpfCliente())) {
-			throw new IllegalArgumentException("CPF inválido");
+			throw new IllegalArgumentException("\nCPF inválido");
 		}
 		List<Movimentacao> movs = mdao.buscarPorCpf(cliente.getCpfCliente());
 		LocalDate hoje = LocalDate.now();
@@ -139,7 +140,7 @@ public class ContaServico {
 	public double adicionarTarifa(Movimentacao mov) {
 		if (mov.getTipoTransacao().name().equalsIgnoreCase("pagamento") || mov.getTipoTransacao().name().equalsIgnoreCase("PIX")) {
 			return mov.getValorOperacao() + 5.0;
-		} else if (mov.getTipoTransacao().equals("saque")) {
+		} else if (mov.getTipoTransacao().name().equalsIgnoreCase("SAQUE")) {
 			return mov.getValorOperacao() + 2.0;
 		} else {
 			return mov.getValorOperacao();
@@ -173,6 +174,11 @@ public class ContaServico {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public DAOGenerico<Conta> getDAO() {
+		return dao;
 	}
 
 }
