@@ -12,8 +12,8 @@ public class Utils {
 	Cliente cliente = new Cliente();
 
 	public void enviarNotificacao(String cpfCorrentista, double saldo) {
-		System.out.println("Notificação: O saldo do correntista com CPF " + cpfCorrentista
-				+ " está abaixo de 100. Saldo atual: " + saldo);
+		System.out.println("\nNotificação: O saldo do correntista com CPF " + cpfCorrentista
+				+ " está abaixo de 100.\nSaldo atual: " + saldo);
 	}
 
 	public boolean verificarFraude(Movimentacao mov) {

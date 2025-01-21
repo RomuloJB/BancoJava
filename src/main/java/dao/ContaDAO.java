@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import entidade.Cliente;
 import entidade.Conta;
@@ -45,5 +46,14 @@ public class ContaDAO extends DAOGenerico<Conta> {
 		em.getTransaction().commit();
 		em.close();
 		return conta;
+		}
+
+		public Conta getContaPorNumero(String numeroConta) {
+			EntityManager em = emf.createEntityManager();
+			TypedQuery<Conta> query = em.createQuery("SELECT c FROM Conta c WHERE c.numeroConta = :numeroConta", Conta.class);
+			query.setParameter("numeroConta", numeroConta);
+			Conta conta = query.getSingleResult();
+			em.close();
+			return conta;
 		}
 }

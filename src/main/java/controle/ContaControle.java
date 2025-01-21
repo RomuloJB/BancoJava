@@ -16,5 +16,9 @@ public class ContaControle {
     public void listarContas(Cliente cliente) {
         contaServico.listarContas(cliente);
     }
+
+    public Conta getContaPorNumero(String numeroConta) {
+        return contaServico.getContaPorNumero(numeroConta);
+    }
 }
 

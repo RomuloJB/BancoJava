@@ -12,7 +12,10 @@ import entidade.Conta;
 import entidade.Movimentacao;
 //import servico.Conta;
 
-public class MovimentacaoDAO {
+public class MovimentacaoDAO extends DAOGenerico<Movimentacao> {
+	public MovimentacaoDAO() {
+		super(Movimentacao.class);
+	}
 
 	EntityManagerFactory emf = Persistence.createEntityManagerFactory("bancoPU");
 
@@ -44,7 +47,7 @@ public class MovimentacaoDAO {
 		return movimentacaoBanco;
 	}
 
-	public void excluir(Long id) {
+	public Movimentacao excluir(Long id) {
 		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
 		Movimentacao movimentacao = em.find(Movimentacao.class, id);
@@ -53,6 +56,8 @@ public class MovimentacaoDAO {
 		}
 		em.getTransaction().commit();
 		em.close();
+		return movimentacao;
+		
 	}
 
 	public List<Movimentacao> listarTodos() {

@@ -9,24 +9,26 @@ import java.util.List;
 
 import dao.MovimentacaoDAO;
 import dao.DAOGenerico;
-import dao.MoviDao;
+import dao.MovimentacaoDAO;
 import entidade.Cliente;
 import entidade.Movimentacao;
 
 public class MovimentacaoServico implements ServicoBase<Movimentacao> {
 	MovimentacaoDAO dao = new MovimentacaoDAO();
-	MoviDao daog = new MoviDao();
 	Movimentacao mov = new Movimentacao();
 
 	@Override
 	public Movimentacao inserir(Movimentacao movimentacao) {
-		movimentacao.setDescricao("Operação de " + movimentacao.getTipoTransacao());
+		movimentacao.setDescricao("\nOperação de " + movimentacao.getTipoTransacao());
 		movimentacao.setDataTransacao(new Date());
-		Movimentacao movimentacaoBanco = daog.inserir(movimentacao);
+		Movimentacao movimentacaoBanco = dao.inserir(movimentacao);
 		return movimentacaoBanco;
 	}
 
 	public Movimentacao inserirCashback (Movimentacao cashback) {
+		if (cashback.getId() != null) {
+            cashback = dao.buscarPorId(cashback.getId());
+        }
 		return dao.inserir(cashback);
 	}
 
@@ -71,6 +73,6 @@ public class MovimentacaoServico implements ServicoBase<Movimentacao> {
 
 	@Override
 	public DAOGenerico<Movimentacao> getDAO() {
-		return daog;
+		return dao;
 	}
 }

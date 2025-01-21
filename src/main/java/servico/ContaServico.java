@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import dao.ContaDAO;
 import dao.DAOGenerico;
-import dao.MoviDao;
+import dao.MovimentacaoDAO;
 import entidade.Cliente;
 import entidade.Conta;
 import entidade.Movimentacao;
@@ -17,7 +17,7 @@ import util.ValidarCpf;
  
 public class ContaServico implements ServicoBase<Conta> {
 	ClienteServico clienteservico = new ClienteServico();
-	MoviDao mdao = new MoviDao();
+	MovimentacaoDAO mdao = new MovimentacaoDAO();
 	Movimentacao mov = new Movimentacao();
 	Cliente cliente = new Cliente();
 	Utils util = new Utils();
@@ -44,6 +44,10 @@ public class ContaServico implements ServicoBase<Conta> {
         return novaConta;
 	}
 
+	public Conta getContaPorNumero(String numeroConta){
+		return dao.getContaPorNumero(numeroConta);
+	}
+
 	public void listarContas(Cliente cliente) {
     	List<Conta> contas = cliente.getContas();
         System.out.println("\nContas do cliente " + cliente.getNomeCliente() + ":");
@@ -53,12 +57,9 @@ public class ContaServico implements ServicoBase<Conta> {
         }
     }
 
-/*
-  public void atualizarSaldo(Conta conta, double valor){
-		double novoSaldo = conta.getSaldo() + valor;
-		conta.setSaldo(novoSaldo);
+	public Conta alterar(Conta conta) {
+		return dao.alterar(conta);
 	}
-*/
 	
 	public double verificarSaldo(Cliente cliente) {
 		if(!ValidarCpf.validarCpf(cliente.getCpfCliente())) {
