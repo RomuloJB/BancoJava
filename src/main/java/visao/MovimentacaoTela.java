@@ -68,7 +68,7 @@ public class MovimentacaoTela {
         
         contaControle.listarContas(cliente);
 		
-	
+	/*
 
 // teste de inserção de movimentação
 		Movimentacao mov = new Movimentacao();
@@ -76,30 +76,34 @@ public class MovimentacaoTela {
 		mov.setDataTransacao(new Date());
 		mov.setDescricao("Depósito de 1000,00 no dia 17/10/24");
 		mov.setTipoTransacao(TipoTransacao.DEPOSITO);
-		mov.setConta(conta3);
+		mov.setConta(conta2);
 		
 		movControle.inserir(mov);
-
+/*
 // limitar operacoes diarias
 		 if (contaServico.limitarOperacoes(mov)) {
             movControle.inserir(mov);
         } else {
             System.out.println("\nLimite de 10 operações diárias excedido.");
         }
-
-
-
-// teste de SAQUE e PAGAMENTO com TARIFA
+*/
+		
+		// teste de SAQUE, PAGAMENTO com TARIFA e LIMITE DE SAQUE
 		Movimentacao mov = new Movimentacao();
-		mov.setValorOperacao(100.0);
+		mov.setValorOperacao(4532.0);
 		mov.setDataTransacao(new Date());
-		mov.setDescricao("Saque de 100,00 no dia 17/10/24");
+		mov.setDescricao("Saque de 4532,00 no dia 17/10/24");
 		mov.setTipoTransacao(TipoTransacao.SAQUE);
 		mov.setConta(conta2);
 		
-		movControle.inserir(mov);
-
-
+		if(contaServico.limiteSaquesDiarios(mov) == false) {
+			System.out.println("\nLimite de saques diarios atingido (R$5000), tente novamente amanha.");
+		} else {
+			movControle.inserir(mov);
+		}
+		
+		
+/*
 
 // teste CASHBACK para CARTAO DE DEBITO
 		Movimentacao mov = new Movimentacao();
@@ -111,24 +115,24 @@ public class MovimentacaoTela {
 		
 		movServico.inserirCashback(mov);
 		movControle.inserir(mov);
-*/
+
 		
-/*
 // teste PIX transacao, limite etc...
 		Movimentacao mov = new Movimentacao();
 		mov.setValorOperacao(50.00);
 		mov.setDataTransacao(new Date());
 		mov.setDescricao("PIX de 50,00 no dia 17/10/24");
 		mov.setTipoTransacao(TipoTransacao.PIX);
-		mov.setConta(conta2);
+		mov.setConta(conta1);
 
-		if(contaServico.limitePix(mov) == true) {
+		if(contaServico.limitePix(mov) == true && contaServico.horarioPix(mov) == true) {
 			System.out.println("\nPIX realizado com sucesso");
 			movControle.inserir(mov);
-		} else {
-			System.out.println("\nLimite de PIX excedido");
-		}
-
+			} else {
+				System.out.println("\nLimite de PIX excedido");
+				}
+		
+		
 
 // teste de cálculo de rendimento
 
@@ -148,8 +152,7 @@ public class MovimentacaoTela {
 		for(Movimentacao m : extratoMensal) {
 			System.out.println("\nData: " + m.getDataTransacao() + " - Descrição: " + m.getDescricao() + " - Valor: " + m.getValorOperacao());
 		}
-*/
-// teste de extrato por período
+		// teste de extrato por período
 		LocalDate dataInicio = LocalDate.of(2025, 1, 19);
 		LocalDate dataFim = LocalDate.of(2025, 1, 21);
 		List<Movimentacao> extratoPeriodico = movServico.consultarExtratoPeriodico("12345678909", dataInicio, dataFim);
@@ -157,6 +160,7 @@ public class MovimentacaoTela {
 		for(Movimentacao m : extratoPeriodico) {
 			System.out.println("\nData: " + m.getDataTransacao() + " - Descrição: " + m.getDescricao() + " - Valor: " + m.getValorOperacao());
     	}
+		*/
 
 	}
 }

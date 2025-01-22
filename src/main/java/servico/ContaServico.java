@@ -109,7 +109,8 @@ public class ContaServico implements ServicoBase<Conta> {
 	}
 
 	public double calcularSaquesDiarios(Movimentacao mov) {
-		if (!ValidarCpf.validarCpf(cliente.getCpfCliente())) {
+//ultima alteraçao tirei o ! de dentro desse if
+		if (ValidarCpf.validarCpf(cliente.getCpfCliente())) {
 			throw new IllegalArgumentException("\nCPF inválido");
 		}
 		List<Movimentacao> movs = mdao.buscarPorCpf(cliente.getCpfCliente());

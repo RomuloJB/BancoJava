@@ -21,6 +21,7 @@ public class MovimentacaoServico implements ServicoBase<Movimentacao> {
 	public Movimentacao inserir(Movimentacao movimentacao) {
 		movimentacao.setDescricao("\nOperação de " + movimentacao.getTipoTransacao());
 		movimentacao.setDataTransacao(new Date());
+// preciso botar uma logico de saldo insuficiente
 		Movimentacao movimentacaoBanco = dao.inserir(movimentacao);
 		return movimentacaoBanco;
 	}
