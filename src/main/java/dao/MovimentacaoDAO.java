@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import entidade.Conta;
 import entidade.Movimentacao;
@@ -88,12 +89,14 @@ public class MovimentacaoDAO extends DAOGenerico<Movimentacao> {
 	    return movimentacoes;
 	}
 
-	public List<Movimentacao> buscarPorCpf(String cpf) {
-			EntityManager em = emf.createEntityManager();
-			Query query = em.createQuery("from Movimentacao where cpfCliente='"+cpf+"'");
-			em.close();
-			return query.getResultList();
-	}
+    public List<Movimentacao> buscarPorCpf(String cpf) {
+        EntityManager em = emf.createEntityManager();
+        TypedQuery<Movimentacao> query = em.createQuery("SELECT m FROM Movimentacao m WHERE m.conta.cliente.cpf = :cpf", Movimentacao.class);
+        query.setParameter("cpf", cpf);
+        List<Movimentacao> movimentacoes = query.getResultList();
+        em.close();
+        return movimentacoes;
+    }
 
 	public Movimentacao buscarPorId(Long id) {
 		EntityManager em = emf.createEntityManager();

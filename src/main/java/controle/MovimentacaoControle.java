@@ -19,6 +19,7 @@ public class MovimentacaoControle {
 	public void inserir(Movimentacao movimentacao) {
 		servico.inserir(movimentacao);
 		atualizarSaldoConta(movimentacao);
+		adicionarTarifa(movimentacao);
 	}
 	
 	private void atualizarSaldoConta(Movimentacao mov) {
@@ -35,6 +36,18 @@ public class MovimentacaoControle {
 		contaServico.alterar(conta);
 		
 	}
+
+	
+    private void adicionarTarifa(Movimentacao mov) {
+        Conta conta = mov.getConta();
+        double tarifa = contaServico.adicionarTarifa(mov);
+
+        if (tarifa > 0) {
+            conta.setSaldo(conta.getSaldo() - tarifa);
+            contaServico.alterar(conta);
+        }
+    }
+
 
 	public void extrato(String cpfCorrentista, int mes, int ano) {
 		servico.consultarExtratoMensal(cpfCorrentista, mes, ano);

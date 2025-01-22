@@ -139,12 +139,14 @@ public class ContaServico implements ServicoBase<Conta> {
 	}
 	
 	public double adicionarTarifa(Movimentacao mov) {
-		if (mov.getTipoTransacao().name().equalsIgnoreCase("pagamento") || mov.getTipoTransacao().name().equalsIgnoreCase("PIX")) {
-			return mov.getValorOperacao() + 5.0;
-		} else if (mov.getTipoTransacao().name().equalsIgnoreCase("SAQUE")) {
-			return mov.getValorOperacao() + 2.0;
-		} else {
-			return mov.getValorOperacao();
+		switch (mov.getTipoTransacao()) {
+			case PAGAMENTO:
+			case PIX:
+				return 5.0;
+			case SAQUE:
+				return 2.0;
+			default:
+				return 0.0;
 		}
 	}
 
@@ -159,7 +161,7 @@ public class ContaServico implements ServicoBase<Conta> {
 	}
 
 	public boolean limitarOperacoes(Movimentacao mov) {
-		List<Movimentacao> movs = mdao.buscarPorCpf(cliente.getCpfCliente());
+		List<Movimentacao> movs = mdao.buscarPorCpf(mov.getConta().getCliente().getCpfCliente());
 		LocalDate hoje = LocalDate.now();
 		int cont = 0;
 

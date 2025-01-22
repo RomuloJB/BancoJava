@@ -1,6 +1,8 @@
 package visao;
 
+import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 import controle.*;
 import entidade.*;
@@ -46,7 +48,7 @@ public class MovimentacaoTela {
 			contaControle.adicionarConta(cliente, conta2);
 		}
 		
-		Conta conta3 = contaControle.getContaPorNumero("001");
+		Conta conta3 = contaControle.getContaPorNumero("003");
 		if(conta3 == null){
 			conta3 = new Conta();
 			conta3.setNumeroConta("003");
@@ -66,19 +68,28 @@ public class MovimentacaoTela {
         
         contaControle.listarContas(cliente);
 		
-		
-		
+	
+
 // teste de inserção de movimentação
 		Movimentacao mov = new Movimentacao();
-		mov.setValorOperacao(5000.0);
+		mov.setValorOperacao(1000.0);
 		mov.setDataTransacao(new Date());
-		mov.setDescricao("Depósito de 5000,00 no dia 17/10/24");
+		mov.setDescricao("Depósito de 1000,00 no dia 17/10/24");
 		mov.setTipoTransacao(TipoTransacao.DEPOSITO);
-		mov.setConta(conta2);
+		mov.setConta(conta3);
 		
 		movControle.inserir(mov);
-		
-// teste de SAQUE
+
+// limitar operacoes diarias
+		 if (contaServico.limitarOperacoes(mov)) {
+            movControle.inserir(mov);
+        } else {
+            System.out.println("\nLimite de 10 operações diárias excedido.");
+        }
+
+
+
+// teste de SAQUE e PAGAMENTO com TARIFA
 		Movimentacao mov = new Movimentacao();
 		mov.setValorOperacao(100.0);
 		mov.setDataTransacao(new Date());
@@ -87,8 +98,9 @@ public class MovimentacaoTela {
 		mov.setConta(conta2);
 		
 		movControle.inserir(mov);
-		*/
-		
+
+
+
 // teste CASHBACK para CARTAO DE DEBITO
 		Movimentacao mov = new Movimentacao();
 		mov.setValorOperacao(100.0);
@@ -96,9 +108,10 @@ public class MovimentacaoTela {
 		mov.setDescricao("Pagamento de 100,00 no DEBITO dia 17/10/24");
 		mov.setTipoTransacao(TipoTransacao.DEBITO);
 		mov.setConta(conta2);
-
+		
 		movServico.inserirCashback(mov);
 		movControle.inserir(mov);
+*/
 		
 /*
 // teste PIX transacao, limite etc...
@@ -116,14 +129,6 @@ public class MovimentacaoTela {
 			System.out.println("\nLimite de PIX excedido");
 		}
 
-// teste rendimento poupança
-		ContaPoupanca contaPoupanca = new ContaPoupanca("003", cliente, ContaTipo.CONTA_POUPANCA, 0.005);
-		
-        contaPoupanca.depositar(1000.00);
-
-        double rendimento = contaPoupanca.calcularRendimentoMensal();
-        System.out.printf("\nRendimento mensal: R$ %.2f%n", rendimento);
-
 
 // teste de cálculo de rendimento
 
@@ -133,14 +138,25 @@ public class MovimentacaoTela {
 
         double rendimento = contaPoupanca.calcularRendimentoMensal();
         System.out.printf("\nRendimento mensal: R$ %.2f%n", rendimento);
-*/
+
 
 
 // teste de extrato mensal
 
+		List<Movimentacao> extratoMensal = movServico.consultarExtratoMensal("12345678909", 1, 2025);
+		System.out.println("\nExtrato Mensal:");
+		for(Movimentacao m : extratoMensal) {
+			System.out.println("\nData: " + m.getDataTransacao() + " - Descrição: " + m.getDescricao() + " - Valor: " + m.getValorOperacao());
+		}
+*/
 // teste de extrato por período
+		LocalDate dataInicio = LocalDate.of(2025, 1, 19);
+		LocalDate dataFim = LocalDate.of(2025, 1, 21);
+		List<Movimentacao> extratoPeriodico = movServico.consultarExtratoPeriodico("12345678909", dataInicio, dataFim);
+		System.out.println("\nExtrato do Período entre " + dataInicio + " e " + dataFim + ":");
+		for(Movimentacao m : extratoPeriodico) {
+			System.out.println("\nData: " + m.getDataTransacao() + " - Descrição: " + m.getDescricao() + " - Valor: " + m.getValorOperacao());
+    	}
 
-    }
-
+	}
 }
-
