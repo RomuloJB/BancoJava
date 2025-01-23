@@ -18,11 +18,13 @@ public class MovimentacaoControle {
 	
 	public void inserir(Movimentacao movimentacao) {
 		servico.inserir(movimentacao);
-		atualizarSaldoConta(movimentacao);
+		//aqui estava duplicando o atualizar saldo fazendo com que o saldo ficasse o dobro do correto
+		//servico.atualizarSaldoConta(movimentacao);
 		adicionarTarifa(movimentacao);
 	}
-	
-	private void atualizarSaldoConta(Movimentacao mov) {
+// transferi para MovimentacaoServico
+/*
+ * 	private void atualizarSaldoConta(Movimentacao mov) {
 		Conta conta = mov.getConta();
 		double novoSaldo = conta.getSaldo();
 
@@ -36,6 +38,9 @@ public class MovimentacaoControle {
 		contaServico.alterar(conta);
 		
 	}
+ * 
+ */
+
 
 	
     private void adicionarTarifa(Movimentacao mov) {

@@ -52,8 +52,13 @@ public class ContaDAO extends DAOGenerico<Conta> {
 			EntityManager em = emf.createEntityManager();
 			TypedQuery<Conta> query = em.createQuery("SELECT c FROM Conta c WHERE c.numeroConta = :numeroConta", Conta.class);
 			query.setParameter("numeroConta", numeroConta);
-			Conta conta = query.getSingleResult();
+			List<Conta> contas = query.getResultList();
 			em.close();
-			return conta;
+			
+			if (contas.isEmpty()) {
+				return null;
+			} else {
+				return contas.get(0);
+			}
 		}
 }

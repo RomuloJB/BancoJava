@@ -11,20 +11,33 @@ import dao.MovimentacaoDAO;
 import dao.DAOGenerico;
 import dao.MovimentacaoDAO;
 import entidade.Cliente;
+import entidade.Conta;
 import entidade.Movimentacao;
+import util.TipoTransacao;
 
 public class MovimentacaoServico implements ServicoBase<Movimentacao> {
 	MovimentacaoDAO dao = new MovimentacaoDAO();
 	Movimentacao mov = new Movimentacao();
+	ContaServico contaServico = new ContaServico();
 
 	@Override
-	public Movimentacao inserir(Movimentacao movimentacao) {
-		movimentacao.setDescricao("\nOperação de " + movimentacao.getTipoTransacao());
-		movimentacao.setDataTransacao(new Date());
-// preciso botar uma logico de saldo insuficiente
-		Movimentacao movimentacaoBanco = dao.inserir(movimentacao);
-		return movimentacaoBanco;
-	}
+	public Movimentacao inserir(Movimentacao mov) {
+		
+        double tarifa = adicionarTarifa(mov);
+        double valorTotalOperacao = mov.getValorOperacao() + tarifa;
+        Conta conta = mov.getConta();
+
+        if (mov.getTipoTransacao() != TipoTransacao.DEPOSITO && valorTotalOperacao > conta.getSaldo()) {
+            System.out.println("Transação não pode ser concluída. Saldo insuficiente.");
+            return null;
+        }
+
+        mov.setDescricao("\nOperação de " + mov.getTipoTransacao());
+        mov.setDataTransacao(new Date());
+        Movimentacao movimentacaoBanco = dao.inserir(mov);
+        atualizarSaldoConta(mov);
+        return movimentacaoBanco;
+    }
 
 	public Movimentacao inserirCashback (Movimentacao cashback) {
 		if (cashback.getId() != null) {
@@ -32,6 +45,45 @@ public class MovimentacaoServico implements ServicoBase<Movimentacao> {
         }
 		return dao.inserir(cashback);
 	}
+	
+	public void atualizarSaldoConta(Movimentacao mov) {
+		Conta conta = mov.getConta();
+		double novoSaldo = conta.getSaldo();
+
+		if(mov.getTipoTransacao() == TipoTransacao.DEPOSITO) {
+			novoSaldo += mov.getValorOperacao();
+		} else {
+			novoSaldo -= mov.getValorOperacao();
+		}
+		conta.setSaldo(novoSaldo);
+		contaServico.alterar(conta);
+	}
+	
+    public double adicionarTarifa(Movimentacao mov) {
+        switch (mov.getTipoTransacao()) {
+            case PAGAMENTO:
+            case PIX:
+                return 5.0; // Tarifa fixa para pagamento e PIX
+            case SAQUE:
+                return 2.0; // Tarifa fixa para saque
+            default:
+                return 0.0; // Sem tarifa para outras transações
+        }
+    }
+	/*
+	    private double adicionarTarifa(Movimentacao mov) {
+        Conta conta = mov.getConta();
+        double tarifa = contaServico.adicionarTarifa(mov);
+
+        if (tarifa > 0) {
+            conta.setSaldo(conta.getSaldo() - tarifa);
+            contaServico.alterar(conta);
+			return tarifa;
+        }
+    } 
+		
+	*/
+
 
 	public Movimentacao buscarPorId (Long id) {
 		return dao.buscarPorId(id);

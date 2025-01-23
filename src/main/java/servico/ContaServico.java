@@ -63,11 +63,12 @@ public class ContaServico implements ServicoBase<Conta> {
 	
 	public double verificarSaldo(Cliente cliente) {
 		if(!ValidarCpf.validarCpf(cliente.getCpfCliente())) {
-			throw new IllegalArgumentException("\nCPF inválido");
+			System.out.println("\nCPF inválido");
 		}
 		
 		List<Movimentacao> movs = mdao.buscarPorCpf(cliente.getCpfCliente());
-		double produtoDepositos = 1.0;
+		// troquei produtoDepositos = 1.0 para totalDepositos = 0.0
+		double totalDepositos = 0.0;
 		double totalSaques = 0.0;
 		double totalPagamentos = 0.0;
 		double totalPix = 0.0;
@@ -75,7 +76,8 @@ public class ContaServico implements ServicoBase<Conta> {
         for (Movimentacao m : movs) {
             TipoTransacao tipo = m.getTipoTransacao();
             if (tipo == TipoTransacao.DEPOSITO) {
-                produtoDepositos *= m.getValorOperacao();
+				// troquei produtoDepositos *= m.getValorOperacao() para totalDepositos += m.getValorOperacao()
+                totalDepositos += m.getValorOperacao();
             } else if (tipo == TipoTransacao.SAQUE) {
                 totalSaques += m.getValorOperacao();
             } else if (tipo == TipoTransacao.PAGAMENTO) {
@@ -85,7 +87,7 @@ public class ContaServico implements ServicoBase<Conta> {
             }
         }
 
-		double saldo = produtoDepositos - totalSaques - totalPagamentos - totalPix;
+		double saldo = totalDepositos - totalSaques - totalPagamentos - totalPix;
 		saldo = Math.max(saldo, 0.0);
 
 		if (saldo < 100.0) {
